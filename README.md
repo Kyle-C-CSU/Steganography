@@ -11,9 +11,9 @@ Sign an image with a watermark then verify a signed image to evaluate the authen
 
 Installation Instructions:
 **Required Libraries**
-1. 'pip install Cryptography'
+1. `pip install Cryptography`
 2. `pip install Pillow`
-3. <pip install Numpy>
+3. `pip install Numpy`
 
 **Clone Repo**
 Navigate to directory you wish to clone repo too.
@@ -22,7 +22,7 @@ Navigate to directory you wish to clone repo too.
 How to use instuctions: 
 **Sign image with watermark**
 1. Open terminal to navigate to directory with steganography repo. 
-2. <python3 sign.py>
+2. `python3 sign.py`
 3. Click "Choose Image" on gui and select the image you wish to encode. 
 ![Screen Shot 2021-04-07 at 4 35 23 PM](https://user-images.githubusercontent.com/71400517/113930548-6ab92b80-97bf-11eb-817c-500a5d30672a.png)
 4. After image is selected click the encode button to encode watermark into image
@@ -31,7 +31,7 @@ How to use instuctions:
 
 **Verify image with watermark**
 1. Open terminal to navigate to directory with steganography repo. 
-2. <python3 verify.py>
+2. `python3 verify.py`
 3. Click "Decrypt image" on gui to select the image you want to verify 
 ![Screen Shot 2021-04-07 at 4 42 32 PM](https://user-images.githubusercontent.com/71400517/113931368-62152500-97c0-11eb-9de8-371eec697e7f.png)
 4. After image is slected the watermark will automatically be verified and the result will appear below the image. 
