@@ -10,6 +10,7 @@ Sign an image with a watermark then verify a signed image to evaluate the authen
 6. numpy.py is used for vectors and matrix 
 
 Installation Instructions:
+`text in this format means you can run it in your terminal`
 
 **Required Libraries**
 1. `pip install Cryptography`
