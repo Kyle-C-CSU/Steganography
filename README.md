@@ -10,6 +10,7 @@ Sign an image with a watermark then verify a signed image to evaluate the authen
 6. numpy.py is used for vectors and matrix 
 
 Installation Instructions:
+
 **Required Libraries**
 1. `pip install Cryptography`
 2. `pip install Pillow`
@@ -20,6 +21,7 @@ Navigate to directory you wish to clone repo too.
 <git clone https://github.com/Kyle-C-CSU/Steganography.git>
 
 How to use instuctions: 
+
 **Sign image with watermark**
 1. Open terminal to navigate to directory with steganography repo. 
 2. `python3 sign.py`
