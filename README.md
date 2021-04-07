@@ -37,8 +37,7 @@ How to use instuctions:
 4. After image is slected the watermark will automatically be verified and the result will appear below the image.
 
 **Success**
-![Screen Shot 2021-04-07 at 4 48 05 PM](https://user-images.githubusercontent.com/71400517/113933313-6f331380-97c2-11eb-84c4-80fb8709557a.png)
+![Screen Shot 2021-04-07 at 4 48 05 PM](https://user-images.githubusercontent.com/71400517/113934423-ba015b00-97c3-11eb-92de-8cf5db3817af.png)
 
 **Fail**
-![Screen Shot 2021-04-07 at 4 56 58 PM](https://user-images.githubusercontent.com/71400517/113933372-7eb25c80-97c2-11eb-9cca-3d9b77e85926.png)
-
+![Screen Shot 2021-04-07 at 4 56 58 PM](https://user-images.githubusercontent.com/71400517/113934448-c1286900-97c3-11eb-9a2b-8af51ac62723.png)
