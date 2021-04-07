@@ -18,7 +18,7 @@ Installation Instructions:
 
 **Clone Repo**
 Navigate to directory you wish to clone repo too.
-<git clone https://github.com/Kyle-C-CSU/Steganography.git>
+`git clone https://github.com/Kyle-C-CSU/Steganography.git`
 
 How to use instuctions: 
 
