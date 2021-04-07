@@ -11,8 +11,8 @@ Sign an image with a watermark then verify a signed image to evaluate the authen
 
 Installation Instructions:
 **Required Libraries**
-1. <pip install Cryptography>
-2. <pip install Pillow>
+1. 'pip install Cryptography'
+2. `pip install Pillow`
 3. <pip install Numpy>
 
 **Clone Repo**
