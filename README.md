@@ -35,7 +35,5 @@ How to use instuctions:
 3. Click "Decrypt image" on gui to select the image you want to verify 
 ![Screen Shot 2021-04-07 at 4 42 32 PM](https://user-images.githubusercontent.com/71400517/113931368-62152500-97c0-11eb-9de8-371eec697e7f.png)
 4. After image is slected the watermark will automatically be verified and the result will appear below the image. 
-<p float="left">
-  <img src="![Screen Shot 2021-04-07 at 4 48 05 PM](https://user-images.githubusercontent.com/71400517/113933313-6f331380-97c2-11eb-84c4-80fb8709557a.png)" width="100" />
-  <img src="![Screen Shot 2021-04-07 at 4 56 58 PM](https://user-images.githubusercontent.com/71400517/113933372-7eb25c80-97c2-11eb-9cca-3d9b77e85926.png)" width="100" /> 
-</p>
+![Screen Shot 2021-04-07 at 4 48 05 PM](https://user-images.githubusercontent.com/71400517/113933313-6f331380-97c2-11eb-84c4-80fb8709557a.png) | ![Screen Shot 2021-04-07 at 4 56 58 PM](https://user-images.githubusercontent.com/71400517/113933372-7eb25c80-97c2-11eb-9cca-3d9b77e85926.png)
+
