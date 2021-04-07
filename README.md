@@ -17,6 +17,7 @@ Installation Instructions:
 3. `pip install Numpy`
 
 **Clone Repo**
+
 Navigate to directory you wish to clone repo too.
 `git clone https://github.com/Kyle-C-CSU/Steganography.git`
 
