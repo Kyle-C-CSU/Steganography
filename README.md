@@ -3,9 +3,9 @@ Sign an image with a watermark then verify a signed image to evaluate the authen
 
 **Requirements:** 
 1. Python3.X is required, the project was tested using Python3.9
-2. pip is included with python3.4 < later 
+2. pip is included with python3.4+ 
 3. Cryptography.py this is used for RSA objects for signing and verifying
-4. tkinter is used for gui and included with python3.1 < later 
+4. tkinter is used for gui and included with python3.1+
 5. Pillow.py is used for image manipulation 
 6. numpy.py is used for vectors and matrix 
 
