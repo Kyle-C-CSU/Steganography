@@ -18,13 +18,16 @@ def genAsyKeys():
         format = serialization.PrivateFormat.PKCS8,
         encryption_algorithm = serialization.NoEncryption()
     )
-    with open('private_noshare.pem', 'wb') as f: f.write(serial_private)
+    with open('private_noshare.pem', 'wb') as f: 
+        f.write(serial_private)
 
     serial_public = public_key.public_bytes(
         encoding = serialization.Encoding.PEM,
         format = serialization.PublicFormat.SubjectPublicKeyInfo
     )
-    with open ('public_shared.pem', 'wb') as f: f.write(serial_public)
+    with open ('public_shared.pem', 'wb') as f: 
+        f.write(serial_public)
+
     print("Public and Private key generated")
     return  
 
@@ -47,7 +50,7 @@ def read_private (filename = "private_noshare.pem"):
         )
     return private_key
 
-def verifyKey(message, public_key=read_public(),private_key=read_public()):
+def verifyKey(message, public_key=read_public(),private_key=read_private()):
     #if signature does not match verify will rasise exception
     
     
@@ -93,3 +96,5 @@ def decrypt(encrypted,original):
     return original_message
 
 
+if __name__ == '__main__':
+    genAsyKeys()
