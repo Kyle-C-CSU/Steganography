@@ -4,6 +4,9 @@ from PIL import Image, ImageTk
 import numpy as np
 import Crypto3 as crypto
 
+import helper
+import base64
+
 image_size = 300,300
 original_message = 'secretWaterMark'
 
@@ -27,52 +30,91 @@ def decrypt():
     img.image = render
     img.pack()
 
+
+
     # algorithm to decrypt the data from the image
     img = cv2.imread(image)
-    data = []
-    stop = False
-    for index_i, i in enumerate(img):
-        i.tolist()
-        for index_j, j in enumerate(i):
-            if((index_j) % 3 == 2):
-                # first pixel
-                data.append(bin(j[0])[-1])
-                # second pixel
-                data.append(bin(j[1])[-1])
-                # third pixel
-                if(bin(j[2])[-1] == '1'):
-                    stop = True
-                    break
-            else:
-                # first pixel
-                data.append(bin(j[0])[-1])
-                # second pixel
-                data.append(bin(j[1])[-1])
-                # third pixel
-                data.append(bin(j[2])[-1])
-        if(stop):
+
+    # FACIAL DETECTION START
+
+    # TODO: We should be able to just copy the facial detection code straight from sign.py, since identical images should produce identical
+    # bounding boxes. If the bounding box is different, it probably indicates a tampered image, so failed authentication is what we want anyway.
+
+    # establish initial bounds
+    # the LSB portion is already set up to use the values of bounds
+    bounds = [0, 0, img.shape[0], img.shape[1]] # [x, y, width, height] where x, y is for the top left bounding pixel
+
+
+    # FACIAL DETECTION END
+
+
+    # STEG START
+    
+    bin_data = ''
+    stop_found = False
+
+    for y in range(bounds[3]): # rows
+        for x in range(bounds[2]): # cols
+            # get red, green, blue LSBs and append to the data string
+            r, g, b = helper.to_binary(img[x][y])
+            bin_data += r[-1] + g[-1] + b[-1]
+
+    # convert string of bits into array of byte-length strings
+    byte_data = [bin_data[i : i+8] for i in range(0, len(bin_data), 8)]
+
+    # convert byte array to character string
+    data_str = ''
+    for byte in byte_data:
+        data_str += chr(int(byte, 2))
+
+        #check for stop sequence of 5 underscores ('_____') in last 5 characters
+        if data_str[-5:] == '_____':
+            # remove the stop sequence from the data
+            data_str = data_str[:-5]
+            stop_found = True
             break
-    bytelist = []
-    # join all the bits to form letters (ascii representation)
-    for i in range(int((len(data)+1)/8)):
-        bytelist.append(data[i*8:(i*8+8)])
-    # join all the letters to form the message.
-    #print(f'printing byte list: \n{bytelist}')
-    bytes_to_intlist = [int(''.join(i), 2) for i in bytelist]
-    #print(f'converting bytes to ints: \n{bytes_to_intlist}')
-    bytearrayObject = bytearray(bytes_to_intlist)
-    #print(f'converting ints to byte array: \n{bytearrayObject}')
-    encrypted_message = bytes(bytearrayObject)
-    print(f'retreiving encrypted message: \n{encrypted_message}')
-    #message = b''.join(list(message))
-    try:
-        print('decrypting message...')
-        message = crypto.decrypt(encrypted_message,original_message)
-        print(f'Authentication Succesfull!\nmessage: {message}')
-        message_label = Label(app, text='Authentication Succesfull!', bg='light green', font=("arial", 20),wraplength=500)
-    except crypto.cryptography.exceptions.InvalidSignature:
+
+
+    if not stop_found:
+        # signature must be invalid since it was never terminated with the stop sequence
         message = 'Failed Authentication...'
-        print(f'decryption unsuccessfull...\n{message}')
+        print(f'[*] AUTHENTICATION FAILED\nReason: no stop sequence found')
+        message_label = Label(app, text=message, bg='red', font=("arial", 20),wraplength=500)
+        #message_label.place(x=150, y=250)
+        message_label.pack()
+        return
+    
+
+    # STEG END
+    
+    print(f'-\nBase64 Signature:\n{data_str}')
+
+    # check if all the characters are ascii. if they aren't we know it can't have the correct signature
+    # why? because we used a base64-encoded string to apply LSB, which only accepts ascii characters.
+    # FIXME: something with this seems to be working wrong, because things get by it, but still cause an error
+    # due to having unsupported characters for b64decode(). The stop sequence check tends to catch most things before
+    # can even get this far though, so it isn't a huge deal presently.
+    if not data_str.isascii:
+        message = 'Failed Authentication...'
+        print(f'[*] AUTHENTICATION FAILED\nReason: invalid characters found in signature')
+        message_label = Label(app, text=message, bg='red', font=("arial", 20),wraplength=500)
+        #message_label.place(x=150, y=250)
+        message_label.pack()
+        return
+
+    # Decode the base64 signature into its original format, removing the residual "b'" from the beginning and "'" from the end
+    signature = base64.b64decode(data_str[2:-1])
+    print(f'-\nDecoded Signature:\n{signature}\n-')
+
+    # Attempt to authenticate the image by verifying the signature is valid
+    try:
+        print('Decrypting Message...')
+        message = crypto.decrypt(signature,original_message)
+        print(f'[*] AUTHENTICATION SUCCESSFUL!')
+        message_label = Label(app, text='Authentication Succesful!', bg='light green', font=("arial", 20),wraplength=500)
+    except crypto.cryptography.exceptions.InvalidSignature:
+        message = '[*] AUTHENTICATION FAILED'
+        print(f'{message}\nReason: signature did not match expected result')
         message_label = Label(app, text=message, bg='red', font=("arial", 20),wraplength=500)
     #message_label.place(x=150, y=250)
     message_label.pack()
