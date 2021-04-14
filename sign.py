@@ -9,6 +9,8 @@ import time
 
 import constants as const
 
+import helper
+import base64
 
 #Open the encrypted image and convert it into a numpy array.
 #Obtain the data from the image by going through the encryption algorithm.
@@ -25,7 +27,7 @@ import constants as const
 global image
 
 image_size = 300,300
-signature = 'secretWaterMark'
+message = 'secretWaterMark'
 
 def on_click():
 	global image
@@ -46,9 +48,9 @@ def on_click():
 	img.image = render
 	#img.place(x=25, y=50)
 	#button_encrypt.pack(side = RIGHT)
-	button_encrypt.place(x= const.RIGHT_BUTTON)
+	button_encrypt.place(x= 150) #FIXME
 	img.pack(side = LEFT)
-	text.pack(side = RIGHT)
+	#text.pack(side = RIGHT)
 
 
 def encrypt_data_into_image():
@@ -56,48 +58,84 @@ def encrypt_data_into_image():
 	global label_success
 	label_success.destroy()
 	#data = text.get(1.0, 'end-1c')#1.0 = start line 1 char 0, end-1c = read to end -1 char (\n)
-	data =  signature
-	print(f'signature: {data}\nencrypting data...')
-	data = crypto.encrypt(data)
-	print(f'encrypted data: {data}')
+
+	
+	print(f'Message: {message}\n-\nEncrypting data...')
+	signature = crypto.encrypt(message)
+	print(f'-\nSignature:\n{signature}')
+	signature = base64.b64encode(signature)
+	print(f'-\nBase64 Signature:\n{signature}')
+
+	# with open('signature.sig', 'wb') as f:
+	# 	f.write(signature)
+
+	data = signature
+
 	#load image
 	img = cv2.imread(image)
-	#remove image extension .ext = 4
-	image = image[:len(image)-4]
-	#break the image into its char level. Represent the chars in ASCII
-	data = [format(i, '08b') for i in data]
-	_, width, _ = img.shape
-	#algorithm to encode the image
-	PixReq = len(data)*3
 
-	RowReq = PixReq/width
-	RowReq = math.ceil(RowReq)
+	#remove image extension
+	
+	image = image[:image.rfind('.')]
 
-	count = 0
-	charCount = 0
+	# FACIAL DETECTION START
 
-	for i in range(RowReq + 1):
-		while(count < width and charCount < len(data)):
-			char = data[charCount]
-			charCount += 1
+	# TODO: um we haven't implemented this yet
 
-			for index_k, k in enumerate(char):
-				if((k == '1' and img[i][count][index_k % 3] % 2 == 0) or k == '0' and img[i][count][index_k % 3] % 2 == 1):
-					img[i][count][index_k % 3] -= 1
-				if index_k % 3 == 2 : 
-					count += 1
-				if index_k == 7:
-					if(charCount*3 < PixReq and img[i][count][2] % 2 == 1):
-						img[i][count][2] -= 1
-					if(charCount*3 >= PixReq and img [i][count][2] % 2 == 0):
-						img[i][count][2] -= 1
-					count += 1
-		count = 0
-		#write the encrypted image into a new file
-		cv2.imwrite(f'{image}_encrypted.png', img)
-		#display the success label
-		label_success = Label(bottom_frame, text="Encryption Successful!", bg='lightgreen', font=('arial',20))
-		#label_success.place(x=160, y=300)
+	# establish initial bounds
+	# the LSB portion is already set up to use the values of bounds
+	bounds = [0, 0, img.shape[0], img.shape[1]] # [x, y, width, height] where x, y is for the top left bounding pixel
+
+
+	# FACIAL DETECTION END
+
+
+	# STEG START
+	
+	# check if data (+ 5-character stopping sequence) can fit in the bounds
+	if (len(data) + 5) * 8 > bounds[2] * bounds[3] * 3:
+		raise ValueError('ERROR: too much data to fit in facial bounds')
+
+	# append stopping sequence of 5 underscores '_____'
+	data_str = str(data) + '_____'
+
+	print('-\nFINAL DATA STRING:\n' + data_str)
+	# convert data to binary
+	bin_data = helper.to_binary(data_str)
+
+	data_index = 0
+
+	for y in range(bounds[1], bounds[3]): # rows
+		for x in range(bounds[0], bounds[2]): # cols
+			r, g, b = helper.to_binary(img[x, y])
+
+			# apply LSB manipulation
+			if data_index < len(bin_data):
+				# red channel: replace LSB with current index of our binary data
+				img[x][y][0] = int(r[:-1] + bin_data[data_index], 2)
+				data_index += 1
+			if data_index < len(bin_data):
+				# green channel: replace LSB with current index of our binary data
+				img[x][y][1] = int(g[:-1] + bin_data[data_index], 2)
+				data_index += 1
+			if data_index < len(bin_data):
+				# blue channel: replace LSB with current index of our binary data
+				img[x][y][2] = int(r[:-1] + bin_data[data_index], 2)
+				data_index += 1
+			
+			# check if we've reached the end of our data
+			if data_index >= len(bin_data):
+				break
+
+	# STEG END
+
+
+		
+	#write the encrypted image into a new file
+	cv2.imwrite(f'{image}_encrypted.png', img)
+	#display the success label
+	label_success = Label(bottom_frame, text="Encryption Successful!", bg='lightgreen', font=('arial',20))
+	#label_success.place(x=160, y=300)
 	label_success.pack(side = LEFT)
 #create instance of asymetric keys
 #crypto.genAsyKeys()
@@ -111,7 +149,7 @@ app.geometry('600x600')
 #Design Tkinter top frame 
 top_frame = Frame(app)
 top_frame.configure(background='light blue')
-top_frame.place(x= const.LEFT_BUTTON)
+top_frame.place(x= 150) #FIXME
 
 #Design Tkinter middle frame
 middle_frame = Frame(top_frame)
