@@ -60,7 +60,7 @@ def sign_image():
 	label_success.destroy()
 	#data = text.get(1.0, 'end-1c')#1.0 = start line 1 char 0, end-1c = read to end -1 char (\n)
 
-	intime = time.time # testing
+	intime = time.time_ns() # testing
 	
 	print(f'Message: {message}\n-\Generating signature...')
 	signature = crypto.sign(message)
@@ -102,8 +102,8 @@ def sign_image():
 
 	data_index = 0
 
-	for y in range(bounds[1], bounds[3]): # rows
-		for x in range(bounds[0], bounds[2]): # cols
+	for y in range(bounds[1], bounds[1] + bounds[3]): # rows
+		for x in range(bounds[0], bounds[0] + bounds[2]): # cols
 			r, g, b = helper.to_binary(img[x, y])
 
 			# apply LSB manipulation
@@ -130,16 +130,16 @@ def sign_image():
 	#write the signed image into a new file
 	cv2.imwrite(f'{image}_signed.png', img)
 
-	outtime = time.time # testing
+	outtime = time.time_ns() # testing
 
-	signtime = outtime - intime	# testing
+	signtime = (outtime - intime) // 1000000  # testing - conver ns time to ms time, keeping it as an int
 
 	print(f"""----------
 	FILENAME: {image}
 	DIMENSIONS: {img.shape[0]} x {img.shape[1]}
 	MESSAGE LENGTH: {len(message)}
 	SIGNING TIME: {signtime}
-	----------""")
+----------""")
 
 
 

@@ -2,7 +2,8 @@ import cv2
 from tkinter import filedialog, Tk, Button, Label
 from PIL import Image, ImageTk
 import numpy as np
-import Crypto3 as crypto
+import crypto
+import time
 
 import helper
 import facedetect
@@ -32,7 +33,7 @@ def verify_image():
     img.pack()
 
 
-    intime = time.time # testing
+    intime = time.time_ns() # testing
 
     img = cv2.imread(image)
 
@@ -45,7 +46,7 @@ def verify_image():
     # the LSB portion is already set up to use the values of bounds
     bounds = [0, 0, img.shape[0], img.shape[1]] # [x, y, width, height] where x, y is for the top left bounding pixel
     bounds = facedetect.getFace(image)
-
+    print(bounds)
     # FACIAL DETECTION END
 
 
@@ -54,14 +55,15 @@ def verify_image():
     bin_data = ''
     stop_found = False
 
-    for y in range(bounds[3]): # rows
-        for x in range(bounds[2]): # cols
+    for y in range(bounds[1], bounds[1] + bounds[3]): # rows
+        for x in range(bounds[0], bounds[0] + bounds[2]): # cols
             # get red, green, blue LSBs and append to the data string
             r, g, b = helper.to_binary(img[x][y])
             bin_data += r[-1] + g[-1] + b[-1]
 
     # convert string of bits into array of byte-length strings
     byte_data = [bin_data[i : i+8] for i in range(0, len(bin_data), 8)]
+    #print(byte_data)
 
     # convert byte array to character string
     data_str = ''
@@ -81,7 +83,7 @@ def verify_image():
         message = 'Failed Authentication...'
         print(f'[*] AUTHENTICATION FAILED\nReason: no stop sequence found')
 
-        verifytime = time.time - intime
+        verifytime = (time.time_ns() - intime) // 1000000
         testout(image, img, original_message, verifytime, "fake")
 
         message_label = Label(app, text=message, bg='red', font=("arial", 20),wraplength=500)
@@ -103,7 +105,7 @@ def verify_image():
         message = 'Failed Authentication...'
         print(f'[*] AUTHENTICATION FAILED\nReason: invalid characters found in signature')
 
-        verifytime = time.time - intime
+        verifytime = (time.time_ns() - intime) // 1000000
         testout(image, img, original_message, verifytime, "fake")
 
         message_label = Label(app, text=message, bg='red', font=("arial", 20),wraplength=500)
@@ -121,7 +123,7 @@ def verify_image():
         message = crypto.verify(signature,original_message)
         print(f'[*] AUTHENTICATION SUCCESSFUL!')
 
-        verifytime = time.time - intime
+        verifytime = (time.time_ns() - intime) // 1000000
         testout(image, img, original_message, verifytime, "real")
 
         message_label = Label(app, text='Authentication Succesful!', bg='light green', font=("arial", 20),wraplength=500)
@@ -129,7 +131,7 @@ def verify_image():
         message = '[*] AUTHENTICATION FAILED'
         print(f'{message}\nReason: signature did not match expected result')
 
-        verifytime = time.time - intime
+        verifytime = (time.time_ns() - intime) // 1000000
         testout(image, img, original_message, verifytime, "fake")
 
         message_label = Label(app, text=message, bg='red', font=("arial", 20),wraplength=500)
@@ -139,12 +141,12 @@ def verify_image():
 
 def testout(image, img, message, verifytime, result):
 	print(f"""----------
-	FILENAME: {image}
-	DIMENSIONS: {img.shape[0]} x {img.shape[1]}
-	MESSAGE LENGTH: {len(message)}
-	VERIFY TIME: {verifytime}
+    FILENAME: {image}
+    DIMENSIONS: {img.shape[0]} x {img.shape[1]}
+    MESSAGE LENGTH: {len(message)}
+    VERIFY TIME: {verifytime}
     RESULT: {result}
-	----------""")
+----------""")
 
 # Defined the TKinter object app with background light blue, title Verify, and app size 600*600 pixels.
 app = Tk()
