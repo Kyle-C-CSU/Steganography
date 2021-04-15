@@ -4,7 +4,7 @@ from tkinter import filedialog
 import cv2
 import numpy as np
 import math
-import Crypto3 as crypto
+import crypto
 import time
 
 import constants as const
@@ -49,12 +49,12 @@ def on_click():
 	img.image = render
 	#img.place(x=25, y=50)
 	#button_encrypt.pack(side = RIGHT)
-	button_encrypt.place(x= 150) #FIXME
+	button_sign.place(x= 150) #FIXME
 	img.pack(side = LEFT)
 	#text.pack(side = RIGHT)
 
 
-def encrypt_data_into_image():
+def sign_image():
 	global image
 	global label_success
 	label_success.destroy()
@@ -62,8 +62,8 @@ def encrypt_data_into_image():
 
 	intime = time.time # testing
 	
-	print(f'Message: {message}\n-\nEncrypting data...')
-	signature = crypto.encrypt(message)
+	print(f'Message: {message}\n-\Generating signature...')
+	signature = crypto.sign(message)
 	print(f'-\nSignature:\n{signature}')
 	signature = base64.b64encode(signature)
 	print(f'-\nBase64 Signature:\n{signature}')
@@ -127,8 +127,8 @@ def encrypt_data_into_image():
 	# STEG END
 
 
-	#write the encrypted image into a new file
-	cv2.imwrite(f'{image}_encrypted.png', img)
+	#write the signed image into a new file
+	cv2.imwrite(f'{image}_signed.png', img)
 
 	outtime = time.time # testing
 
@@ -144,7 +144,7 @@ def encrypt_data_into_image():
 
 
 	#display the success label
-	label_success = Label(bottom_frame, text="Encryption Successful!", bg='lightgreen', font=('arial',20))
+	label_success = Label(bottom_frame, text="Signing Successful!", bg='lightgreen', font=('arial',20))
 	#label_success.place(x=160, y=300)
 	label_success.pack(side = LEFT)
 #create instance of asymetric keys
@@ -153,7 +153,7 @@ def encrypt_data_into_image():
 #Design Tkinter main app frame 600 x 600
 app = Tk()
 app.configure(background='light blue')
-app.title('Encrypt')
+app.title('Sign')
 app.geometry('600x600')
 
 #Design Tkinter top frame 
@@ -183,8 +183,8 @@ button_chooseImage.pack(side = LEFT)
 #text.place(x=340, y=55, height=165)
 #text.pack(side = RIGHT)
 
-#create encrypt button
-button_encrypt = Button(top_frame, text='Encode Image', bg='white', fg='black', command=encrypt_data_into_image)
+#create sign button
+button_sign = Button(top_frame, text='Sign Image', bg='white', fg='black', command=sign_image)
 #button_encrypt.place(x=250,y=250)
 #button_encrypt.pack(side = RIGHT)
 
