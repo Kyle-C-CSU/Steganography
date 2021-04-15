@@ -2,19 +2,13 @@ import cv2
 import sys
 
 def getFace(imagePath):
-    # Get user supplied values
-    #imagePath = sys.argv[1]
-
-    # Create the haar cascade xml file included in opencv
+    # Get the haar cascade xml file included in opencv
     faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
 
     # Read the image
-    try:
-        image = cv2.imread(imagePath)
-        print("Image read successfully for facial detection")
-    except(e):
-        print("Facial detection error: " + e)
-    #gray scale image
+    image = cv2.imread(imagePath)
+
+    # Convert to grayscale image
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     # Detect faces in the image
@@ -26,10 +20,29 @@ def getFace(imagePath):
         flags = cv2.CASCADE_SCALE_IMAGE
     )
 
-    print("Found {0} faces!".format(len(faces)))
+    print(f"Found {len(faces)} faces!")
 
-    # Draw a rectangle around the faces
-    for (x, y, w, h) in faces:
-        cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
-    print(f"Facial Bounds: x:{x}\ty:{y}\tw:{w}\th:{h}")
-    return(x,y,w,h)
+    
+    if len(faces) == 0:
+        # No faces found so just return the image bounds
+        return [0, 0, image.shape[0], image.shape[1]]
+    else:
+        # At least 1 face, so return the largest
+        largest_index = 0
+        largest_size = 0
+        current_index = 0
+        for (x, y, w, h) in faces:
+            if w * h > largest_size:
+                largest_size = w * h
+                largest_index = current_index
+
+            print(f"--\nFacial Bounds: x:{x}\ty:{y}\tw:{w}\th:{h}\n--")
+            current_index += 1
+
+        return faces[largest_index] # we assume the largest face will be our desired face
+
+
+
+bounds = [0, 0, 0, 0]
+bounds = getFace(sys.argv[1])
+print(bounds)
