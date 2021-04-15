@@ -50,21 +50,21 @@ def read_private (filename = "private_noshare.pem"):
         )
     return private_key
 
-def verifyKey(message, public_key=read_public(),private_key=read_private()):
-    #if signature does not match verify will rasise exception
+# def verifyKey(message, public_key=read_public(),private_key=read_private()):
+#     #if signature does not match verify will rasise exception
     
     
-    signature = private_key.sign(
-                    message,
-                    pad = padding.PSS(
-                        mgf = padding.MGF1(hashes.SHA256()),
-                        salt_length = padding.PSS.MAX_LENGTH
-                    ),
-                    hash_val = hashes.SHA256()
-                )
-    return public_key.verify(signature, message, pad, hash_val)
+#     signature = private_key.sign(
+#                     message,
+#                     pad = padding.PSS(
+#                         mgf = padding.MGF1(hashes.SHA256()),
+#                         salt_length = padding.PSS.MAX_LENGTH
+#                     ),
+#                     hash_val = hashes.SHA256()
+#                 )
+#     return public_key.verify(signature, message, pad, hash_val)
 
-def encrypt(message):
+def sign(message):
     ######### Public (shared) device only #########
     message = bytes(message,'utf-8')
     private_key = read_private()
@@ -78,13 +78,13 @@ def encrypt(message):
                 )
     return signature 
 
-def decrypt(encrypted,original):
+def verify(signature, message):
     #########      Private device only    ##########
     #encrypted = bytes(encrypted, 'utf-8')
     public_key = read_public()
-    original = bytes(original,'utf-8')
+    original = bytes(message,'utf-8')
     original_message = public_key.verify(
-        encrypted,
+        signature,
         original,
         padding.PSS(
             #mask generated function object 
