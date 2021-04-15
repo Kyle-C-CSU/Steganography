@@ -43,6 +43,6 @@ def getFace(imagePath):
 
 
 
-bounds = [0, 0, 0, 0]
-bounds = getFace(sys.argv[1])
-print(bounds)
+# bounds = [0, 0, 0, 0]
+# bounds = getFace(sys.argv[1])
+# print(bounds)
