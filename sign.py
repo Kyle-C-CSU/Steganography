@@ -60,6 +60,7 @@ def encrypt_data_into_image():
 	label_success.destroy()
 	#data = text.get(1.0, 'end-1c')#1.0 = start line 1 char 0, end-1c = read to end -1 char (\n)
 
+	intime = time.time # testing
 	
 	print(f'Message: {message}\n-\nEncrypting data...')
 	signature = crypto.encrypt(message)
@@ -126,9 +127,22 @@ def encrypt_data_into_image():
 	# STEG END
 
 
-		
 	#write the encrypted image into a new file
 	cv2.imwrite(f'{image}_encrypted.png', img)
+
+	outtime = time.time # testing
+
+	signtime = outtime - intime	# testing
+
+	print(f"""----------
+	FILENAME: {image}
+	DIMENSIONS: {img.shape[0]} x {img.shape[1]}
+	MESSAGE LENGTH: {len(message)}
+	SIGNING TIME: {signtime}
+	----------""")
+
+
+
 	#display the success label
 	label_success = Label(bottom_frame, text="Encryption Successful!", bg='lightgreen', font=('arial',20))
 	#label_success.place(x=160, y=300)

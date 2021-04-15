@@ -32,6 +32,7 @@ def decrypt():
     img.pack()
 
 
+    intime = time.time
 
     # algorithm to decrypt the data from the image
     img = cv2.imread(image)
@@ -80,6 +81,10 @@ def decrypt():
         # signature must be invalid since it was never terminated with the stop sequence
         message = 'Failed Authentication...'
         print(f'[*] AUTHENTICATION FAILED\nReason: no stop sequence found')
+
+        verifytime = time.time - intime
+        testout(image, img, original_message, verifytime, "fake")
+
         message_label = Label(app, text=message, bg='red', font=("arial", 20),wraplength=500)
         #message_label.place(x=150, y=250)
         message_label.pack()
@@ -98,6 +103,10 @@ def decrypt():
     if not data_str.isascii:
         message = 'Failed Authentication...'
         print(f'[*] AUTHENTICATION FAILED\nReason: invalid characters found in signature')
+
+        verifytime = time.time - intime
+        testout(image, img, original_message, verifytime, "fake")
+
         message_label = Label(app, text=message, bg='red', font=("arial", 20),wraplength=500)
         #message_label.place(x=150, y=250)
         message_label.pack()
@@ -112,13 +121,31 @@ def decrypt():
         print('Decrypting Message...')
         message = crypto.decrypt(signature,original_message)
         print(f'[*] AUTHENTICATION SUCCESSFUL!')
+
+        verifytime = time.time - intime
+        testout(image, img, original_message, verifytime, "real")
+
         message_label = Label(app, text='Authentication Succesful!', bg='light green', font=("arial", 20),wraplength=500)
     except crypto.cryptography.exceptions.InvalidSignature:
         message = '[*] AUTHENTICATION FAILED'
         print(f'{message}\nReason: signature did not match expected result')
+
+        verifytime = time.time - intime
+        testout(image, img, original_message, verifytime, "fake")
+
         message_label = Label(app, text=message, bg='red', font=("arial", 20),wraplength=500)
     #message_label.place(x=150, y=250)
     message_label.pack()
+
+
+def testout(image, img, message, verifytime, result):
+	print(f"""----------
+	FILENAME: {image}
+	DIMENSIONS: {img.shape[0]} x {img.shape[1]}
+	MESSAGE LENGTH: {len(message)}
+	VERIFY TIME: {verifytime}
+    RESULT: {result}
+	----------""")
 
 # Defined the TKinter object app with background lavender, title Decrypt, and app size 600*600 pixels.
 app = Tk()
