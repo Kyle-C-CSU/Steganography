@@ -5,6 +5,7 @@ import numpy as np
 import Crypto3 as crypto
 
 import helper
+import facedetect
 import base64
 
 image_size = 300,300
@@ -37,13 +38,13 @@ def decrypt():
 
     # FACIAL DETECTION START
 
-    # TODO: We should be able to just copy the facial detection code straight from sign.py, since identical images should produce identical
+    # Same facial detection code as sign.py, since identical images will produce identical
     # bounding boxes. If the bounding box is different, it probably indicates a tampered image, so failed authentication is what we want anyway.
 
     # establish initial bounds
     # the LSB portion is already set up to use the values of bounds
     bounds = [0, 0, img.shape[0], img.shape[1]] # [x, y, width, height] where x, y is for the top left bounding pixel
-
+    bounds = facedetect.getFace(image)
 
     # FACIAL DETECTION END
 
@@ -93,7 +94,7 @@ def decrypt():
     # why? because we used a base64-encoded string to apply LSB, which only accepts ascii characters.
     # FIXME: something with this seems to be working wrong, because things get by it, but still cause an error
     # due to having unsupported characters for b64decode(). The stop sequence check tends to catch most things before
-    # can even get this far though, so it isn't a huge deal presently.
+    # they can even get this far though, so it isn't a huge deal presently.
     if not data_str.isascii:
         message = 'Failed Authentication...'
         print(f'[*] AUTHENTICATION FAILED\nReason: invalid characters found in signature')

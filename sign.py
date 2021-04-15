@@ -10,6 +10,7 @@ import time
 import constants as const
 
 import helper
+import facedetect
 import base64
 
 #Open the encrypted image and convert it into a numpy array.
@@ -66,29 +67,24 @@ def encrypt_data_into_image():
 	signature = base64.b64encode(signature)
 	print(f'-\nBase64 Signature:\n{signature}')
 
-	# with open('signature.sig', 'wb') as f:
-	# 	f.write(signature)
-
 	data = signature
 
 	#load image
 	img = cv2.imread(image)
 
-	#remove image extension
-	
-	image = image[:image.rfind('.')]
+
 
 	# FACIAL DETECTION START
-
-	# TODO: um we haven't implemented this yet
 
 	# establish initial bounds
 	# the LSB portion is already set up to use the values of bounds
 	bounds = [0, 0, img.shape[0], img.shape[1]] # [x, y, width, height] where x, y is for the top left bounding pixel
-
+	bounds = facedetect.getFace(image)
 
 	# FACIAL DETECTION END
 
+	#remove image extension
+	image = image[:image.rfind('.')]
 
 	# STEG START
 	
