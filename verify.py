@@ -11,7 +11,7 @@ import base64
 image_size = 300,300
 original_message = 'secretWaterMark'
 
-def decrypt():
+def verify_image():
     global message_label
     message_label.destroy()
     # use the tkinter filedialog library to open the file using a dialog box.
@@ -32,9 +32,8 @@ def decrypt():
     img.pack()
 
 
-    intime = time.time
+    intime = time.time # testing
 
-    # algorithm to decrypt the data from the image
     img = cv2.imread(image)
 
     # FACIAL DETECTION START
@@ -50,7 +49,7 @@ def decrypt():
     # FACIAL DETECTION END
 
 
-    # STEG START
+    # STEG START - strip the signature from the image by inverting our LSB algorithm
     
     bin_data = ''
     stop_found = False
@@ -118,8 +117,8 @@ def decrypt():
 
     # Attempt to authenticate the image by verifying the signature is valid
     try:
-        print('Decrypting Message...')
-        message = crypto.decrypt(signature,original_message)
+        print('Verifying image...')
+        message = crypto.verify(signature,original_message)
         print(f'[*] AUTHENTICATION SUCCESSFUL!')
 
         verifytime = time.time - intime
@@ -147,13 +146,13 @@ def testout(image, img, message, verifytime, result):
     RESULT: {result}
 	----------""")
 
-# Defined the TKinter object app with background lavender, title Decrypt, and app size 600*600 pixels.
+# Defined the TKinter object app with background light blue, title Verify, and app size 600*600 pixels.
 app = Tk()
 app.configure(background='light blue')
-app.title("Decrypt")
+app.title("Verify")
 app.geometry('600x600')
 # Add the button to call the function decrypt.
-main_button = Button(app, text="Decrypt image", bg='white', fg='black', command=decrypt)
+main_button = Button(app, text="Verify image", bg='white', fg='black', command=verify_image)
 #main_button.place(x=250, y=10)
 main_button.pack()
 message_label = Label(app, text='', bg='light blue')
