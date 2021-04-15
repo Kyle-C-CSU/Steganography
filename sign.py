@@ -49,7 +49,7 @@ def on_click():
 	img.image = render
 	#img.place(x=25, y=50)
 	#button_encrypt.pack(side = RIGHT)
-	button_sign.place(x= 150) #FIXME
+	button_sign.place(x = const.RIGHT_BUTTON)
 	img.pack(side = LEFT)
 	#text.pack(side = RIGHT)
 
@@ -159,7 +159,7 @@ app.geometry('600x600')
 #Design Tkinter top frame 
 top_frame = Frame(app)
 top_frame.configure(background='light blue')
-top_frame.place(x= 150) #FIXME
+top_frame.place(x = const.LEFT_BUTTON) #FIXME
 
 #Design Tkinter middle frame
 middle_frame = Frame(top_frame)
