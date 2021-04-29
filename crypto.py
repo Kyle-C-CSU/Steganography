@@ -5,6 +5,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives import hashes
 
+# Generate Asymmetric Key Pair
 def genAsyKeys():
     private_key = rsa.generate_private_key(
         public_exponent = 65537,
@@ -50,20 +51,8 @@ def read_private (filename = "private_noshare.pem"):
         )
     return private_key
 
-# def verifyKey(message, public_key=read_public(),private_key=read_private()):
-#     #if signature does not match verify will rasise exception
-    
-    
-#     signature = private_key.sign(
-#                     message,
-#                     pad = padding.PSS(
-#                         mgf = padding.MGF1(hashes.SHA256()),
-#                         salt_length = padding.PSS.MAX_LENGTH
-#                     ),
-#                     hash_val = hashes.SHA256()
-#                 )
-#     return public_key.verify(signature, message, pad, hash_val)
 
+# Generate a signature from a message
 def sign(message):
     ######### Public (shared) device only #########
     message = bytes(message,'utf-8')
@@ -78,9 +67,9 @@ def sign(message):
                 )
     return signature 
 
+# Verify a signature-message pair
 def verify(signature, message):
     #########      Private device only    ##########
-    #encrypted = bytes(encrypted, 'utf-8')
     public_key = read_public()
     original = bytes(message,'utf-8')
     original_message = public_key.verify(
@@ -96,5 +85,6 @@ def verify(signature, message):
     return original_message
 
 
+# Call the file to generate asymmetric keys if you don't already have them
 if __name__ == '__main__':
     genAsyKeys()

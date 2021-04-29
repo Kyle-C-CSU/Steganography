@@ -1,6 +1,7 @@
 import cv2
 import sys
 
+# Get the bounds for the largest face in an image
 def getFace(imagePath):
     # Get the haar cascade xml file included in opencv
     faceCascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
@@ -20,7 +21,7 @@ def getFace(imagePath):
         flags = cv2.CASCADE_SCALE_IMAGE
     )
 
-    print(f"Found {len(faces)} faces!")
+    print(f"--\nFound {len(faces)} faces!")
 
     
     if len(faces) == 0:
@@ -36,13 +37,9 @@ def getFace(imagePath):
                 largest_size = w * h
                 largest_index = current_index
 
-            print(f"--\nFacial Bounds: x:{x}\ty:{y}\tw:{w}\th:{h}\n--")
+            print(f"- Facial Bounds: x:{x}\ty:{y}\tw:{w}\th:{h}")
             current_index += 1
 
+        print("--")
         return faces[largest_index] # we assume the largest face will be our desired face
 
-
-
-# bounds = [0, 0, 0, 0]
-# bounds = getFace(sys.argv[1])
-# print(bounds)
